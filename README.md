@@ -4,18 +4,19 @@
 
 - **界面**（侧栏、标题、按钮、设置）：`Anthropic Sans Web Text`
 - **模型对话**（Markdown 正文 / 标题 / 表格）：`Anthropic Serif Web Text`
-- **代码块**保持等宽字体不变
+- **代码 / 代码块**：`Anthropic Mono Variable`
 
 中文回退到思源字体（`Noto Sans SC` / `Source Han Sans SC` / `Noto Serif SC`），未安装时回退到系统字体（苹方 / 微软雅黑 / 宋体）。
 
 ## 字体
 
-仓库 `fonts/` 附带两个拉丁字体，安装后英文 / 代码效果最佳：
+仓库 `fonts/` 附带三个拉丁字体，安装后英文 / 代码效果最佳：
 
 | 字体 | 文件 | 用途 |
 |---|---|---|
 | Anthropic Sans Web Text | `fonts/AnthropicSansWebText.ttf` | 界面 |
 | Anthropic Serif Web Text | `fonts/AnthropicSerifWebText.ttf` | 模型对话 |
+| Anthropic Mono Variable | `fonts/AnthropicMonoVariable.ttf` | 代码 |
 
 安装：Windows 双击每个 `.ttf` → 点「安装」；macOS 用「字体册」导入。
 
@@ -76,7 +77,7 @@ dsh plugin --profile web remove dsh-anthropic-fonts
 - `lib/index.js` —— Host 半边（空；字体效果只在浏览器）
 - `lib/client.js` —— Client 半边（注入字体 CSS 变量覆盖）
 - `cordis.patch.yml` —— bundle patch，插入插件行
-- `fonts/` —— 两个拉丁字体文件
+- `fonts/` —— 三个拉丁字体文件
 
 ## 参考
 

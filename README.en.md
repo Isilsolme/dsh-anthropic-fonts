@@ -4,18 +4,19 @@ Apply Anthropic's typefaces to the [DeepSeek Harness](https://github.com/deepsee
 
 - **Interface** (sidebar, headings, buttons, settings): `Anthropic Sans Web Text`
 - **Model conversation** (Markdown body / headings / tables): `Anthropic Serif Web Text`
-- **Code blocks** stay monospace.
+- **Code / code blocks**: `Anthropic Mono Variable`
 
 CJK text falls back to the Source Han family (`Noto Sans SC` / `Source Han Sans SC` / `Noto Serif SC`), then to system fonts.
 
 ## Fonts
 
-The `fonts/` directory ships the two Latin fonts; install them for the best English / code rendering:
+The `fonts/` directory ships the three Latin fonts; install them for the best English / code rendering:
 
 | Font | File | Role |
 |---|---|---|
 | Anthropic Sans Web Text | `fonts/AnthropicSansWebText.ttf` | Interface |
 | Anthropic Serif Web Text | `fonts/AnthropicSerifWebText.ttf` | Conversation |
+| Anthropic Mono Variable | `fonts/AnthropicMonoVariable.ttf` | Code |
 
 Install: double-click each `.ttf` on Windows → **Install**; on macOS use **Font Book**.
 
