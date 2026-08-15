@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "description": "Switch the DSH web interface to Anthropic Sans Web Text and model conversation to Anthropic Serif Web Text.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Isilsolme/dsh-anthropic-fonts.git"
+  },
+  "homepage": "https://github.com/Isilsolme/dsh-anthropic-fonts#readme",
+  "bugs": {
+    "url": "https://github.com/Isilsolme/dsh-anthropic-fonts/issues"
+  },
   "type": "module",
   "main": "lib/index.js",
   "exports": {
