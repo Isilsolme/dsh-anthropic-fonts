@@ -1,43 +1,39 @@
 # dsh-anthropic-fonts
 
-Apply Anthropic's typefaces to the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web UI:
+给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web 界面换上 Anthropic 字体：
 
-- **Interface** (sidebar, headings, buttons, settings): `Anthropic Sans Web Text`
-- **Model conversation** (Markdown body / headings / tables): `Anthropic Serif Web Text`
-- **Code blocks** stay monospace.
+- **界面**（侧栏、标题、按钮、设置）：`Anthropic Sans Web Text`
+- **模型对话**（Markdown 正文 / 标题 / 表格）：`Anthropic Serif Web Text`
+- **代码块**保持等宽字体不变
 
-CJK text falls back to `Anthropic Sans SC` / `Anthropic Serif SC`.
+中文回退到思源字体（`Noto Sans SC` / `Source Han Sans SC` / `Noto Serif SC`），未安装时回退到系统字体（苹方 / 微软雅黑 / 宋体）。
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![dsh-plugin](https://img.shields.io/badge/dsh-plugin-web--ui-3964fe.svg)](https://github.com/deepseek-ai/deepseek-harness)
+## 字体
 
-## Prerequisites
+仓库 `fonts/` 附带两个拉丁字体，安装后英文 / 代码效果最佳：
 
-Install the fonts locally (otherwise the browser falls back to system fonts):
+| 字体 | 文件 | 用途 |
+|---|---|---|
+| Anthropic Sans Web Text | `fonts/AnthropicSansWebText.ttf` | 界面 |
+| Anthropic Serif Web Text | `fonts/AnthropicSerifWebText.ttf` | 模型对话 |
 
-- `Anthropic Sans Web Text`
-- `Anthropic Serif Web Text`
-- (optional, CJK) `Anthropic Sans SC`, `Anthropic Serif SC`
+安装：Windows 双击每个 `.ttf` → 点「安装」；macOS 用「字体册」导入。
 
-## Install
+中文无需额外安装：会回退到思源黑体 / 宋体（Noto Sans/Serif SC、Source Han），没有则用系统字体。
 
-A standard `dsh` bundle plugin — the same shape as
-[`dsh-whale-animation`](https://github.com/LeemanCheung/dsh-whale-animation)
-and the [`dsh-toolkit`](https://github.com/omdsh-dev/dsh-toolkit) collection.
+## 安装
 
-### CLI (recommended)
+标准的 `dsh` bundle 插件 —— 与 [`dsh-whale-animation`](https://github.com/LeemanCheung/dsh-whale-animation) 同一种形态。
+
+### CLI（推荐）
 
 ```sh
-# local checkout
-dsh plugin --profile web add "C:/path/to/dsh-anthropic-fonts"
-# or from GitHub
-dsh plugin --profile web add "github:you/dsh-anthropic-fonts"
+dsh plugin --profile web add "github:Isilsolme/dsh-anthropic-fonts"
 ```
 
-`dsh plugin add` runs `pnpm add` inside the profile and auto-appends the
-bundle to `dsh.profile.bundles`. Restart the web surface afterwards.
+`dsh plugin add` 会在 profile 内执行 `pnpm add`，并自动把 bundle 追加到 `dsh.profile.bundles`。之后重启 web 即可生效。
 
-### Manual
+### 手动安装
 
 ```jsonc
 // ~/.dsh/profiles/web/package.json
@@ -57,33 +53,35 @@ bundle to `dsh.profile.bundles`. Restart the web surface afterwards.
 }
 ```
 
-then:
+然后：
 
 ```sh
 cd ~/.dsh/profiles/web && pnpm install
 ```
 
-## Uninstall / toggle off
+## 卸载 / 关闭
 
 ```sh
 dsh plugin --profile web remove dsh-anthropic-fonts
 ```
 
-(or remove it from `dependencies` and `bundles`, then `pnpm install`).
-Restart to restore the default fonts.
+（或从 `dependencies` 和 `bundles` 里移除，再 `pnpm install`）。重启即恢复默认字体。
 
-## How it works
+## 原理
 
-Overrides the DSH typography tokens: `--dsw-font-family` (UI) and the non-code
-`--dsw-font-markdown-*` tokens (conversation body). The injected `<style>` is
-owned by the client fiber and removed on uninstall.
+覆盖 DSH 的排版 token：`--dsw-font-family`（UI 用），以及全部非代码的 `--dsw-font-markdown-*`（对话正文用）。注入的 `<style>` 归属 client fiber，卸载时一并清理。
 
-## Structure
+## 结构
 
-- `lib/index.js` — host half (empty; the effect is browser-only)
-- `lib/client.js` — client half (injects the font CSS variable overrides)
-- `cordis.patch.yml` — bundle patch inserting the plugin row
+- `lib/index.js` —— Host 半边（空；字体效果只在浏览器）
+- `lib/client.js` —— Client 半边（注入字体 CSS 变量覆盖）
+- `cordis.patch.yml` —— bundle patch，插入插件行
+- `fonts/` —— 两个拉丁字体文件
 
-## License
+## 参考
+
+字体栈参考了 [`blaxisomu/typora_claude`](https://github.com/blaxisomu/typora_claude) 的实现（拉丁用 Anthropic Web 字体、中文回退思源字体）。
+
+## 许可
 
 MIT
