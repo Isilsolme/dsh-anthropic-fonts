@@ -1,0 +1,4 @@
+# dsh-anthropic-fonts: Anthropic Sans (UI) / Serif (conversation) for the DSH web surface.
+- insert:
+    - id: anthropic-fonts
+      name: 'dsh-anthropic-fonts'
