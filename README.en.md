@@ -29,6 +29,14 @@ A standard `dsh` bundle plugin — the same shape as
 
 ### CLI (recommended)
 
+Published on npm — install in one command:
+
+```sh
+dsh plugin --profile web add dsh-anthropic-fonts
+```
+
+or from GitHub:
+
 ```sh
 dsh plugin --profile web add "github:Isilsolme/dsh-anthropic-fonts"
 ```
@@ -82,7 +90,7 @@ owned by the client fiber and removed on uninstall.
 - `lib/index.js` — host half (empty; the effect is browser-only)
 - `lib/client.js` — client half (injects the font CSS variable overrides)
 - `cordis.patch.yml` — bundle patch inserting the plugin row
-- `fonts/` — the two Latin font files
+- `fonts/` — the three Latin font files
 
 ## Credits
 

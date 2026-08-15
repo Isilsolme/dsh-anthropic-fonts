@@ -28,6 +28,14 @@
 
 ### CLI（推荐）
 
+已发布到 npm，一条命令安装：
+
+```sh
+dsh plugin --profile web add dsh-anthropic-fonts
+```
+
+也可以从 GitHub 安装：
+
 ```sh
 dsh plugin --profile web add "github:Isilsolme/dsh-anthropic-fonts"
 ```

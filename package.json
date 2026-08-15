@@ -1,6 +1,6 @@
 {
   "name": "dsh-anthropic-fonts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Switch the DSH web interface to Anthropic Sans Web Text and model conversation to Anthropic Serif Web Text.",
   "license": "MIT",
   "repository": {
