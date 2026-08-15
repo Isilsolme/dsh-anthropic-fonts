@@ -10,15 +10,19 @@
 
 ## 字体
 
-仓库 `fonts/` 附带三个拉丁字体，安装后英文 / 代码效果最佳：
+> **重要：插件不内置字体**。npm 包不随包分发字体文件；安装插件后还需手动安装字体（见下表），然后刷新 / 重启 web 才会生效。
 
-| 字体 | 文件 | 用途 |
+插件引用的三个 Anthropic 拉丁字体（建议安装，英文 / 代码效果最佳）：
+
+| 字体 | 用途 | 获取方式 |
 |---|---|---|
-| Anthropic Sans Web Text | `fonts/AnthropicSansWebText.ttf` | 界面 |
-| Anthropic Serif Web Text | `fonts/AnthropicSerifWebText.ttf` | 模型对话 |
-| Anthropic Mono Variable | `fonts/AnthropicMonoVariable.ttf` | 代码 |
+| Anthropic Sans Web Text | 界面 | 仓库 [`fonts/`](fonts/) 下载，或从 Claude 应用提取 |
+| Anthropic Serif Web Text | 模型对话 | 仓库 [`fonts/`](fonts/) 下载，或从 Claude 应用提取 |
+| Anthropic Mono Variable | 代码 | 仓库 [`fonts/`](fonts/) 下载，或从 Claude 应用提取 |
 
-安装：Windows 双击每个 `.ttf` → 点「安装」；macOS 用「字体册」导入。
+安装：Windows 双击每个 `.ttf` → 点「安装」；macOS 用「字体册」导入。安装后**刷新 / 重启 web** 生效。
+
+> 字体版权归 Anthropic 所有，仅供个人使用，不适用 MIT 许可（详见 [LICENSE](LICENSE) 字体声明）。
 
 中文无需额外安装：会回退到思源黑体 / 宋体（Noto Sans/Serif SC、Source Han），没有则用系统字体。
 
@@ -42,13 +46,15 @@ dsh plugin --profile web add "github:Isilsolme/dsh-anthropic-fonts"
 
 `dsh plugin add` 会在 profile 内执行 `pnpm add`，并自动把 bundle 追加到 `dsh.profile.bundles`。之后重启 web 即可生效。
 
+> ⚠️ 安装插件后**还需手动安装字体文件**（见上方「字体」）——npm 包不随包分发字体。
+
 ### 手动安装
 
 ```jsonc
 // ~/.dsh/profiles/web/package.json
 {
   "dependencies": {
-    "dsh-anthropic-fonts": "link:C:/path/to/dsh-anthropic-fonts"
+    "dsh-anthropic-fonts": "^0.2.0"
   },
   "dsh": {
     "profile": {
@@ -68,6 +74,8 @@ dsh plugin --profile web add "github:Isilsolme/dsh-anthropic-fonts"
 cd ~/.dsh/profiles/web && pnpm install
 ```
 
+> 本地调试时，可用 `"dsh-anthropic-fonts": "link:C:/path/to/dsh-anthropic-fonts"` 指向本地目录。
+
 ## 卸载 / 关闭
 
 ```sh
@@ -78,7 +86,7 @@ dsh plugin --profile web remove dsh-anthropic-fonts
 
 ## 原理
 
-覆盖 DSH 的排版 token：`--dsw-font-family`（UI 用），以及全部非代码的 `--dsw-font-markdown-*`（对话正文用）。注入的 `<style>` 归属 client fiber，卸载时一并清理。
+只覆盖 DSH 排版 token 的**字体族**部分：`--dsw-font-family`（UI 用）与全部非代码的 `--dsw-font-markdown-*-font-family`（对话正文用），保留 DSH 官方字号与行高；代码字体走 `--ds-font-family-code`。注入的 `<style>` 归属 client fiber，卸载时一并清理。
 
 ## 结构
 

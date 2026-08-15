@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2025 dsh-anthropic-fonts contributors
+Copyright (c) 2026 Isilsolme and contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Font files notice: `fonts/AnthropicSansWebText.ttf`, `fonts/AnthropicSerifWebText.ttf`
+and `fonts/AnthropicMonoVariable.ttf` are proprietary typefaces of Anthropic,
+extracted from Anthropic's web products. They are included in this repository
+for personal use only and are **not** covered by the MIT license above; all
+rights remain with Anthropic. The npm package does not ship these files.

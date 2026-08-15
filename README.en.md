@@ -10,15 +10,23 @@ CJK text falls back to the Source Han family (`Noto Sans SC` / `Source Han Sans 
 
 ## Fonts
 
-The `fonts/` directory ships the three Latin fonts; install them for the best English / code rendering:
+> **Important: the plugin does not bundle fonts.** The npm package does not ship
+> font files; install the fonts below manually, then refresh / restart the web
+> surface for the change to take effect.
 
-| Font | File | Role |
+The plugin references three Anthropic Latin typefaces (install them for the best
+English / code rendering):
+
+| Font | Role | Where to get it |
 |---|---|---|
-| Anthropic Sans Web Text | `fonts/AnthropicSansWebText.ttf` | Interface |
-| Anthropic Serif Web Text | `fonts/AnthropicSerifWebText.ttf` | Conversation |
-| Anthropic Mono Variable | `fonts/AnthropicMonoVariable.ttf` | Code |
+| Anthropic Sans Web Text | Interface | Download from [`fonts/`](fonts/), or extract from a Claude app |
+| Anthropic Serif Web Text | Conversation | Download from [`fonts/`](fonts/), or extract from a Claude app |
+| Anthropic Mono Variable | Code | Download from [`fonts/`](fonts/), or extract from a Claude app |
 
-Install: double-click each `.ttf` on Windows → **Install**; on macOS use **Font Book**.
+Install: double-click each `.ttf` on Windows → **Install**; on macOS use **Font Book**. Then **refresh / restart** the web surface.
+
+> The fonts are proprietary to Anthropic, for personal use only, and are **not**
+> covered by the MIT license (see the font notice in [LICENSE](LICENSE)).
 
 Chinese needs no extra install — it falls back to the Source Han fonts (Noto Sans/Serif SC, Source Han), then to system CJK fonts.
 
@@ -44,13 +52,16 @@ dsh plugin --profile web add "github:Isilsolme/dsh-anthropic-fonts"
 `dsh plugin add` runs `pnpm add` inside the profile and auto-appends the
 bundle to `dsh.profile.bundles`. Restart the web surface afterwards.
 
+> ⚠️ After installing the plugin you **still need to install the font files
+> manually** (see "Fonts" above) — the npm package does not ship them.
+
 ### Manual
 
 ```jsonc
 // ~/.dsh/profiles/web/package.json
 {
   "dependencies": {
-    "dsh-anthropic-fonts": "link:C:/path/to/dsh-anthropic-fonts"
+    "dsh-anthropic-fonts": "^0.2.0"
   },
   "dsh": {
     "profile": {
@@ -70,6 +81,10 @@ then:
 cd ~/.dsh/profiles/web && pnpm install
 ```
 
+> For local development you can instead use
+> `"dsh-anthropic-fonts": "link:C:/path/to/dsh-anthropic-fonts"` to point at a
+> local checkout.
+
 ## Uninstall / toggle off
 
 ```sh
@@ -81,8 +96,10 @@ Restart to restore the default fonts.
 
 ## How it works
 
-Overrides the DSH typography tokens: `--dsw-font-family` (UI) and the non-code
-`--dsw-font-markdown-*` tokens (conversation body). The injected `<style>` is
+Overrides only the **font-family** part of the DSH typography tokens:
+`--dsw-font-family` (UI) and the non-code `--dsw-font-markdown-*-font-family`
+tokens (conversation body), keeping DSH's official font sizes and line heights;
+code font goes through `--ds-font-family-code`. The injected `<style>` is
 owned by the client fiber and removed on uninstall.
 
 ## Structure
