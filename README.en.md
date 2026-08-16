@@ -1,5 +1,7 @@
 # dsh-anthropic-fonts
 
+[![Awesome DSH Plugin](https://awesome-dsh-plugin.com/badge.svg)](https://awesome-dsh-plugin.com)
+
 Apply Anthropic's typefaces to the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web UI:
 
 - **Interface** (sidebar, headings, buttons, settings): `Anthropic Sans Web Text`

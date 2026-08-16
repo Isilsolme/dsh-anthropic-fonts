@@ -1,5 +1,7 @@
 # dsh-anthropic-fonts
 
+[![Awesome DSH Plugin](https://awesome-dsh-plugin.com/badge.svg)](https://awesome-dsh-plugin.com)
+
 给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web 界面换上 Anthropic 字体：
 
 - **界面**（侧栏、标题、按钮、设置）：`Anthropic Sans Web Text`
