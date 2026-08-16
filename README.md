@@ -24,7 +24,7 @@
 
 安装：Windows 双击每个 `.ttf` → 点「安装」；macOS 用「字体册」导入。安装后**刷新 / 重启 web** 生效。
 
-> 字体版权归 Anthropic 所有，仅供个人使用，不适用 MIT 许可（详见 [LICENSE](LICENSE) 字体声明）。
+> 字体版权归 Anthropic 所有，仅供个人使用，不适用 AGPL-3.0 许可（详见 [LICENSE](LICENSE) 字体声明）。
 
 中文无需额外安装：会回退到思源黑体 / 宋体（Noto Sans/Serif SC、Source Han），没有则用系统字体。
 
@@ -103,4 +103,4 @@ dsh plugin --profile web remove dsh-anthropic-fonts
 
 ## 许可
 
-MIT
+AGPL-3.0
