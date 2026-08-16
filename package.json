@@ -2,7 +2,7 @@
   "name": "dsh-anthropic-fonts",
   "version": "0.2.0",
   "description": "Switch the DSH web interface to Anthropic Sans Web Text and model conversation to Anthropic Serif Web Text.",
-  "license": "AGPL-3.0-only",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Isilsolme/dsh-anthropic-fonts.git"

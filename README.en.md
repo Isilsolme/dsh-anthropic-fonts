@@ -28,7 +28,7 @@ English / code rendering):
 Install: double-click each `.ttf` on Windows → **Install**; on macOS use **Font Book**. Then **refresh / restart** the web surface.
 
 > The fonts are proprietary to Anthropic, for personal use only, and are **not**
-> covered by the AGPL-3.0 license (see the font notice in [LICENSE](LICENSE)).
+> covered by the MIT license (see the font notice in [LICENSE](LICENSE)).
 
 Chinese needs no extra install — it falls back to the Source Han fonts (Noto Sans/Serif SC, Source Han), then to system CJK fonts.
 
@@ -117,4 +117,4 @@ Font stack modeled on [`blaxisomu/typora_claude`](https://github.com/blaxisomu/t
 
 ## License
 
-AGPL-3.0
+MIT
