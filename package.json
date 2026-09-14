@@ -1,6 +1,6 @@
 {
   "name": "dsh-anthropic-fonts",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Switch the DSH web interface to Anthropic Sans Web Text and model conversation to Anthropic Serif Web Text.",
   "license": "MIT",
   "repository": {
@@ -45,6 +45,29 @@
       "inject": [],
       "platform": "web",
       "immediately": true
+    },
+    "compatibility": {
+      "dsh": ">=0.1.0-rc.7 <0.2.0",
+      "dshReleases": {
+        "rc.7": "unknown",
+        "rc.8": "unknown",
+        "0.1.1-rc.1": "unknown",
+        "0.1.1-rc.2": "unknown",
+        "0.1.2-alpha.2": "unknown",
+        "0.1.2-alpha.3": "unknown",
+        "0.1.2-alpha.4": "unknown",
+        "0.1.2-alpha.5": "unknown",
+        "0.1.2-rc.1": "unknown",
+        "0.1.3-alpha.1": "unknown",
+        "0.1.3-alpha.2": "unknown",
+        "0.1.5-alpha.1": "unknown",
+        "0.1.5-alpha.2": "compatible",
+        "0.1.5-rc.1": "compatible",
+        "0.1.5-rc.2": "compatible"
+      },
+      "profiles": [
+        "web"
+      ]
     }
   },
   "peerDependencies": {

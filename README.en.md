@@ -63,7 +63,7 @@ bundle to `dsh.profile.bundles`. Restart the web surface afterwards.
 // ~/.dsh/profiles/web/package.json
 {
   "dependencies": {
-    "dsh-anthropic-fonts": "^0.2.0"
+    "dsh-anthropic-fonts": "^0.2.1"
   },
   "dsh": {
     "profile": {
@@ -95,6 +95,53 @@ dsh plugin --profile web remove dsh-anthropic-fonts
 
 (or remove it from `dependencies` and `bundles`, then `pnpm install`).
 Restart to restore the default fonts.
+
+## Compatibility & permissions
+
+| Field | Declared in | Value |
+|---|---|---|
+| DSH range | `dsh.compatibility.dsh` | `>=0.1.0-rc.7 <0.2.0` |
+| DSH per release | `dsh.compatibility.dshReleases` | see below |
+| Node.js | `engines.node` | `>=22` |
+| Profile | `dsh.compatibility.profiles`, `dsh.client.platform` | `web` |
+
+`dshReleases` records every DSH release as `compatible`, `incompatible`, or
+`unknown`. **Only releases actually smoke-tested in a disposable profile are
+marked `compatible`**; releases covered by the range but not individually tested
+stay `unknown` — a range is never presented as verified evidence.
+
+Smoke-tested releases (disposable profile, `DSH_HOME` pointed at a temp
+directory, never the real profile):
+
+| DSH release | install | start | uninstall |
+|---|---|---|---|
+| 0.1.5-alpha.2 | ✅ | ✅ | ✅ |
+| 0.1.5-rc.1 | ✅ | ✅ | ✅ |
+| 0.1.5-rc.2 | ✅ | ✅ | ✅ |
+
+How each release was checked:
+
+```sh
+DSH_HOME=/tmp/dsh-smoke dsh plugin --profile web add /path/to/dsh-anthropic-fonts  # install
+DSH_HOME=/tmp/dsh-smoke dsh --profile web --dump-config                            # entry anthropic-fonts in the composed tree
+DSH_HOME=/tmp/dsh-smoke dsh --profile web --port 39123 --no-open                   # start, prints the served URL
+DSH_HOME=/tmp/dsh-smoke dsh plugin --profile web remove dsh-anthropic-fonts        # uninstall
+```
+
+Covered: dependency installed into the profile, bundle appended to
+`dsh.profile.bundles`, bundle patch inserting entry `anthropic-fonts`, the web
+server binding and serving a 200 page whose boot payload registers
+`dsh-anthropic-fonts/client.js`, and full removal of both the dependency and the
+bundle row. **Not covered**: visual acceptance in a browser (install the fonts
+and refresh manually), and no independent security audit.
+
+**Permissions**: the client half injects a single `<style>` element into
+`document.head`; no file, network, command, or credential access. The host half
+(`lib/index.js`) is empty.
+
+After a new DSH release: re-run the four steps in a disposable profile, add that
+release to `dsh.compatibility.dshReleases` as `compatible`, bump this plugin's
+SemVer, and push.
 
 ## How it works
 

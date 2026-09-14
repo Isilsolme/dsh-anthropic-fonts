@@ -56,7 +56,7 @@ dsh plugin --profile web add "github:Isilsolme/dsh-anthropic-fonts"
 // ~/.dsh/profiles/web/package.json
 {
   "dependencies": {
-    "dsh-anthropic-fonts": "^0.2.0"
+    "dsh-anthropic-fonts": "^0.2.1"
   },
   "dsh": {
     "profile": {
@@ -85,6 +85,40 @@ dsh plugin --profile web remove dsh-anthropic-fonts
 ```
 
 （或从 `dependencies` 和 `bundles` 里移除，再 `pnpm install`）。重启即恢复默认字体。
+
+## 兼容性与权限
+
+| 项目 | 声明位置 | 值 |
+|---|---|---|
+| DSH 范围 | `dsh.compatibility.dsh` | `>=0.1.0-rc.7 <0.2.0` |
+| DSH 逐版本 | `dsh.compatibility.dshReleases` | 见下 |
+| Node.js | `engines.node` | `>=22` |
+| Profile | `dsh.compatibility.profiles`、`dsh.client.platform` | `web` |
+
+`dshReleases` 对每个 DSH 版本逐项写 `compatible` / `incompatible` / `unknown`。**只有实际跑过一次性 Profile 冒烟验证的版本才写 `compatible`**；范围覆盖但未逐版本验证的一律是 `unknown`，范围声明不会被当作已验证。
+
+已验证版本（一次性 Profile，`DSH_HOME` 指向临时目录，不触碰真实 Profile）：
+
+| DSH 版本 | 安装 | 启动 | 卸载 |
+|---|---|---|---|
+| 0.1.5-alpha.2 | ✅ | ✅ | ✅ |
+| 0.1.5-rc.1 | ✅ | ✅ | ✅ |
+| 0.1.5-rc.2 | ✅ | ✅ | ✅ |
+
+验证步骤（每个版本各跑一次）：
+
+```sh
+DSH_HOME=/tmp/dsh-smoke dsh plugin --profile web add /path/to/dsh-anthropic-fonts  # 安装
+DSH_HOME=/tmp/dsh-smoke dsh --profile web --dump-config                            # 入口 anthropic-fonts 出现在组合配置里
+DSH_HOME=/tmp/dsh-smoke dsh --profile web --port 39123 --no-open                   # 启动并输出访问地址
+DSH_HOME=/tmp/dsh-smoke dsh plugin --profile web remove dsh-anthropic-fonts        # 卸载
+```
+
+覆盖到的证据：依赖写入 profile、bundle 追加进 `dsh.profile.bundles`、bundle patch 插入入口 `anthropic-fonts`、web 服务正常监听并返回页面（启动载荷里已注册 `dsh-anthropic-fonts/client.js`）、卸载后依赖与 bundle 行都被移除。**未覆盖**：浏览器内的目视渲染验收（需人工装好字体再刷新页面），也不包含独立安全审计。
+
+**权限**：客户端只往 `document.head` 注入一个 `<style>`；不读写文件、不访问网络、不执行命令、不接触凭据。Host 半边（`lib/index.js`）为空。
+
+新的 DSH 版本发布后：在一次性 Profile 里重跑上面四步，把该版本写进 `dsh.compatibility.dshReleases`（`compatible`），并提升本插件 SemVer 后推送。
 
 ## 原理
 
