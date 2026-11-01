@@ -63,7 +63,7 @@ bundle to `dsh.profile.bundles`. Restart the web surface afterwards.
 // ~/.dsh/profiles/web/package.json
 {
   "dependencies": {
-    "dsh-anthropic-fonts": "^0.2.1"
+    "dsh-anthropic-fonts": "^0.3.0"
   },
   "dsh": {
     "profile": {
@@ -96,14 +96,29 @@ dsh plugin --profile web remove dsh-anthropic-fonts
 (or remove it from `dependencies` and `bundles`, then `pnpm install`).
 Restart to restore the default fonts.
 
+## Interaction with DSH's own font settings
+
+DSH 0.2 added **Text font** / **Code font** fields under *Settings → Appearance*.
+The plugin targets the **empty (default)** state of those fields: a value typed
+there is written as an inline custom property on `body`, which outranks the
+plugin's stylesheet, so body and code text fall back to your font (the
+conversation serif is still owned by the plugin). Leave both fields empty to use
+the plugin's typefaces.
+
 ## Compatibility & permissions
 
 | Field | Declared in | Value |
 |---|---|---|
-| DSH range | `dsh.compatibility.dsh` | `>=0.1.0-rc.7 <0.2.0` |
+| DSH range (enforced by DSH) | `engines.dsh` | `>=0.1.0-rc.7 <0.3.0` |
+| DSH range (docs / market display) | `dsh.compatibility.dsh` | `>=0.1.0-rc.7 <0.3.0` |
 | DSH per release | `dsh.compatibility.dshReleases` | see below |
 | Node.js | `engines.node` | `>=22` |
 | Profile | `dsh.compatibility.profiles`, `dsh.client.platform` | `web` |
+
+Since 0.2, DSH runs a compatibility preflight before starting a profile and
+**disables** any plugin row whose `engines.dsh` (or `@deepseek-ai/dsh*` peer
+range) is unmet. Declaring `engines.dsh` makes an out-of-range install fail
+loudly instead of silently doing nothing.
 
 `dshReleases` records every DSH release as `compatible`, `incompatible`, or
 `unknown`. **Only releases actually smoke-tested in a disposable profile are
@@ -118,6 +133,14 @@ directory, never the real profile):
 | 0.1.5-alpha.2 | ✅ | ✅ | ✅ |
 | 0.1.5-rc.1 | ✅ | ✅ | ✅ |
 | 0.1.5-rc.2 | ✅ | ✅ | ✅ |
+| 0.2.1-rc.5 | ✅ | ✅ | ✅ |
+
+0.2.1-rc.5 additionally got an in-browser acceptance check: computed styles were
+read from the live page — interface `--dsw-font-family` resolves to Anthropic
+Sans; the Markdown container, h1–h4, p, strong, em and tables resolve to
+Anthropic Serif; inline code and code blocks resolve to Anthropic Mono — while
+sizes, line heights and weights stay identical to the DSH defaults
+(h1 21px/700/30px, body 14px/24px, tables 13px/22px, …).
 
 How each release was checked:
 
@@ -129,11 +152,11 @@ DSH_HOME=/tmp/dsh-smoke dsh plugin --profile web remove dsh-anthropic-fonts     
 ```
 
 Covered: dependency installed into the profile, bundle appended to
-`dsh.profile.bundles`, bundle patch inserting entry `anthropic-fonts`, the web
-server binding and serving a 200 page whose boot payload registers
-`dsh-anthropic-fonts/client.js`, and full removal of both the dependency and the
-bundle row. **Not covered**: visual acceptance in a browser (install the fonts
-and refresh manually), and no independent security audit.
+`dsh.profile.bundles`, bundle patch inserting entry `anthropic-fonts` (and not
+disabled by the compatibility preflight), the web server binding and serving a
+page whose boot payload registers `dsh-anthropic-fonts/client.js`, and full
+removal of both the dependency and the bundle row. **Not covered**: an
+independent security audit.
 
 **Permissions**: the client half injects a single `<style>` element into
 `document.head`; no file, network, command, or credential access. The host half
@@ -145,11 +168,32 @@ SemVer, and push.
 
 ## How it works
 
-Overrides only the **font-family** part of the DSH typography tokens:
-`--dsw-font-family` (UI) and the non-code `--dsw-font-markdown-*-font-family`
-tokens (conversation body), keeping DSH's official font sizes and line heights;
-code font goes through `--ds-font-family-code`. The injected `<style>` is
-owned by the client fiber and removed on uninstall.
+Since DSH 0.2 the typography tokens come in two layers:
+
+- `--dsh-font-family-{text,code}` is the single source of truth (the *Text font*
+  / *Code font* settings write exactly these);
+- the theme derives `--dsw-font-family` / `--ds-font-family-code` from them on
+  `body`, and every other typography token references those two.
+
+The plugin therefore overrides the `--dsh-*` layer. **Writing only
+`--dsw-font-family` stopped working in 0.2**: the derivation rule on `body`
+overrides the inherited `:root` value, which is why the plugin appeared to fall
+back to the default fonts after the 0.2.1 update. 0.1.x has no `--dsh-*` layer
+and reads `--dsw-font-family` directly, so both sets are written.
+
+The serif conversation text comes from the Markdown shorthand tokens. In 0.2.x
+Markdown body and headings use `font: var(--dsw-font-markdown-h1)` style
+shorthands with the family already baked in, so the standalone
+`--dsw-font-markdown-*-font-family` tokens are no longer read by any selector.
+The plugin rebuilds those shorthands from the host's own `-font-style` /
+`-font-weight` / `-font-size` / `-line-height` components, swapping only the
+family: sizes, line heights and weights keep following DSH (including the size
+settings), with DSH defaults as fallbacks so 0.1.x keeps working too.
+
+The code font goes through `--dsh-font-family-code` / `--ds-font-family-code`;
+the terminal font (`--dsh-font-family-terminal`) is out of scope.
+
+The injected `<style>` is owned by the client fiber and removed on uninstall.
 
 ## Structure
 

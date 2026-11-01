@@ -56,7 +56,7 @@ dsh plugin --profile web add "github:Isilsolme/dsh-anthropic-fonts"
 // ~/.dsh/profiles/web/package.json
 {
   "dependencies": {
-    "dsh-anthropic-fonts": "^0.2.1"
+    "dsh-anthropic-fonts": "^0.3.0"
   },
   "dsh": {
     "profile": {
@@ -86,14 +86,21 @@ dsh plugin --profile web remove dsh-anthropic-fonts
 
 （或从 `dependencies` 和 `bundles` 里移除，再 `pnpm install`）。重启即恢复默认字体。
 
+## 与 DSH 自带字体设置的关系
+
+DSH 0.2 起「设置 → 外观」里有「正文字体 / 代码字体」。插件针对的是**这两栏留空（默认）**的情况：如果你在那里填了自己的字体，DSH 会把它写成 `body` 上的内联变量，优先级高于插件注入的样式表——正文和代码会回落到你填的字体（对话衬线仍由插件接管）。想用插件的字体，保持这两栏为空即可。
+
 ## 兼容性与权限
 
 | 项目 | 声明位置 | 值 |
 |---|---|---|
-| DSH 范围 | `dsh.compatibility.dsh` | `>=0.1.0-rc.7 <0.2.0` |
+| DSH 范围（DSH 实际校验） | `engines.dsh` | `>=0.1.0-rc.7 <0.3.0` |
+| DSH 范围（文档 / 市场展示） | `dsh.compatibility.dsh` | `>=0.1.0-rc.7 <0.3.0` |
 | DSH 逐版本 | `dsh.compatibility.dshReleases` | 见下 |
 | Node.js | `engines.node` | `>=22` |
 | Profile | `dsh.compatibility.profiles`、`dsh.client.platform` | `web` |
+
+DSH 0.2 起，启动 profile 前会先按 `engines.dsh`（没有则看 `@deepseek-ai/dsh*` 的 peer 依赖）做一次兼容性 preflight，不满足的插件行会被**直接禁用**。这里写 `engines.dsh` 是为了让超出范围时失败得明确，而不是静默不生效。
 
 `dshReleases` 对每个 DSH 版本逐项写 `compatible` / `incompatible` / `unknown`。**只有实际跑过一次性 Profile 冒烟验证的版本才写 `compatible`**；范围覆盖但未逐版本验证的一律是 `unknown`，范围声明不会被当作已验证。
 
@@ -104,6 +111,9 @@ dsh plugin --profile web remove dsh-anthropic-fonts
 | 0.1.5-alpha.2 | ✅ | ✅ | ✅ |
 | 0.1.5-rc.1 | ✅ | ✅ | ✅ |
 | 0.1.5-rc.2 | ✅ | ✅ | ✅ |
+| 0.2.1-rc.5 | ✅ | ✅ | ✅ |
+
+0.2.1-rc.5 额外做了浏览器内验收：在真实页面里读取计算样式，界面 `--dsw-font-family` 为 Anthropic Sans，Markdown 容器 / h1–h4 / p / strong / em / 表格为 Anthropic Serif，行内代码与代码块为 Anthropic Mono，且字号、行高、字重与 DSH 默认值逐项一致（h1 21px/700/30px、正文 14px/24px、表格 13px/22px 等）。
 
 验证步骤（每个版本各跑一次）：
 
@@ -114,7 +124,7 @@ DSH_HOME=/tmp/dsh-smoke dsh --profile web --port 39123 --no-open                
 DSH_HOME=/tmp/dsh-smoke dsh plugin --profile web remove dsh-anthropic-fonts        # 卸载
 ```
 
-覆盖到的证据：依赖写入 profile、bundle 追加进 `dsh.profile.bundles`、bundle patch 插入入口 `anthropic-fonts`、web 服务正常监听并返回页面（启动载荷里已注册 `dsh-anthropic-fonts/client.js`）、卸载后依赖与 bundle 行都被移除。**未覆盖**：浏览器内的目视渲染验收（需人工装好字体再刷新页面），也不包含独立安全审计。
+覆盖到的证据：依赖写入 profile、bundle 追加进 `dsh.profile.bundles`、bundle patch 插入入口 `anthropic-fonts`（且没被兼容性 preflight 禁用）、web 服务正常监听并返回页面（启动载荷里已注册 `dsh-anthropic-fonts/client.js`）、卸载后依赖与 bundle 行都被移除。**未覆盖**：独立安全审计。
 
 **权限**：客户端只往 `document.head` 注入一个 `<style>`；不读写文件、不访问网络、不执行命令、不接触凭据。Host 半边（`lib/index.js`）为空。
 
@@ -122,7 +132,18 @@ DSH_HOME=/tmp/dsh-smoke dsh plugin --profile web remove dsh-anthropic-fonts     
 
 ## 原理
 
-只覆盖 DSH 排版 token 的**字体族**部分：`--dsw-font-family`（UI 用）与全部非代码的 `--dsw-font-markdown-*-font-family`（对话正文用），保留 DSH 官方字号与行高；代码字体走 `--ds-font-family-code`。注入的 `<style>` 归属 client fiber，卸载时一并清理。
+DSH 0.2 起排版 token 分成两层：
+
+- `--dsh-font-family-{text,code}` 是唯一事实来源（「设置 → 外观」里的正文字体 / 代码字体写的就是它们）；
+- theme 在 `body` 上把它们拼进 `--dsw-font-family` / `--ds-font-family-code`，其余所有排版 token 再引用这两个。
+
+所以插件覆盖的是 `--dsh-*` 这一层。**只写 `--dsw-font-family` 在 0.2 起会失效**：`body` 上那条派生声明会盖掉 `:root` 上的继承值——这正是 0.2.1 版本更新后插件「整体回到默认字体」的原因。0.1.x 没有 `--dsh-*` 层、直接读 `--dsw-font-family`，因此两套都写，两条曲线同时可用。
+
+对话的衬线来自 Markdown 简写 token。0.2.x 起 Markdown 正文与标题改用 `font: var(--dsw-font-markdown-h1)` 这类简写，字体族已经烧进简写值里，单独的 `--dsw-font-markdown-*-font-family` 不再被任何选择器读取。插件改用宿主自己的 `-font-style` / `-font-weight` / `-font-size` / `-line-height` 分量重建这些简写，只把字体族换成衬线：字号、行高、字重仍然跟着 DSH（包括设置里的字号调整），分量缺失时回退到 DSH 默认值，0.1.x 也照常工作。
+
+代码字体走 `--dsh-font-family-code` / `--ds-font-family-code`；终端字体（`--dsh-font-family-terminal`）不在插件范围内。
+
+注入的 `<style>` 归属 client fiber，卸载时一并清理。
 
 ## 结构
 
